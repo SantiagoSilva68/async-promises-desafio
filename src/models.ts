@@ -7,21 +7,39 @@ class Contact {
 
 class ContactsCollection {
   data: Contact[] = [];
-  load() {
-    // usar la version Async (readFile)
-    const json = jsonfile.readFileSync(__dirname + "/contacts.json");
-    this.data = json;
-  }
+load() {
+    const myPromise = new Promise((resolve, reject) => {
+        jsonfile.readFile(__dirname + "/contacts.json", (err, data) => {
+            if (err) {
+                reject(err);
+            } else {
+                this.data = data;
+                resolve(this.data);
+            }
+        });
+    });
+    return myPromise;
+}
+
   getAll() {
-    return this.data;
+    return this.data; 
   }
   addOne(contact: Contact) {
     this.data.push(contact);
   }
   save() {
-    // usar la version Async (writeFIle)
-    jsonfile.writeFileSync(__dirname + "/contacts.json", this.data);
-  }
+    const myPromise = new Promise((resolve, reject) => {
+        jsonfile.writeFile(__dirname + "/contacts.json", this.data, (err) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(this.data);
+            }
+        });
+    });
+    return myPromise;
+}
+
   getOneById(id) {
     const encontrado = this.data.find((contacto) => {
       if (contacto?.id == id) {
